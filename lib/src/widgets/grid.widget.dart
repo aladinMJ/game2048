@@ -45,8 +45,8 @@ class GridGameWidget extends StatelessWidget {
                         '$value',
                         style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold),
+                            fontSize: 28.0,
+                            fontWeight: FontWeight.normal),
                       ),
                     ),
                   ))
