@@ -7,7 +7,8 @@ class CustomButton extends StatelessWidget {
   final double height;
   final double fontSize; // Nouvelle propriété pour la taille du texte
 
-  CustomButton({
+  const CustomButton({
+    super.key,
     required this.label,
     required this.onPressed,
     this.width = 150,
@@ -21,7 +22,7 @@ class CustomButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         minimumSize: Size(width, height), // Définit la taille du bouton
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       child: Text(
         label,

@@ -24,13 +24,13 @@ class GridGameWidget extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         padding: const EdgeInsets.all(8),
-        mainAxisSpacing: screenWidth * 0.0125,
+        //mainAxisSpacing: screenWidth * 0.0125,
+
         crossAxisCount: grid.length,
         children: List.generate(grid.length * grid.length, (index) {
           int row = (index / gridSize).floor();
           int col = index % gridSize;
           int value = grid[row][col];
-
           return Column(
             children: <Widget>[
               // MyButton(myValue: g.listCells[lig][col], myColor: color),
