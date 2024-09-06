@@ -6,7 +6,9 @@ import 'package:game2048/src/enums/SwipeType.enum.dart';
 class Grid {
   int size;
 
-  Grid({required this.size});
+  Grid({required this.size}) {
+    initGridState();
+  }
 
   List<List<int>> grid = [];
 
@@ -258,12 +260,11 @@ class Grid {
             grid[row][col] = 0;
             grid[i][col] = sum;
             increaseScore(sum);
-            generateRandomlyNewCell();
-            print("after gen cell");
           }
         }
         moveGrid(swipeType);
-
+        generateRandomlyNewCell();
+        print("after gen cell");
         print(grid);
         break;
       case Direction.horizontal:
@@ -276,19 +277,19 @@ class Grid {
             grid[row][col] = 0;
             grid[row][i] = sum;
             increaseScore(sum);
-            generateRandomlyNewCell();
-            print("after gen cell");
           }
         }
         moveGrid(swipeType);
+        generateRandomlyNewCell();
+        print("after gen cell");
 
         print(grid);
         break;
     }
   }
 
-  void playGame(SwipeType swipeType) {
-    initGridState();
+  void playGameSimulation(SwipeType swipeType) {
+    // initGridState();
     print("init grid");
     print(grid);
     int nbTimesToPlay = 5;
@@ -312,11 +313,21 @@ class Grid {
       nbTimesToPlay--;
     }
   }
+
+  void play(SwipeType swipe) {
+    for (int i = 0; i < size; i++) {
+      for (int j = 0; j < size; j++) {
+        if (grid[i][j] != 0) {
+          forEachCellToCheck(i, j, swipe);
+        }
+      }
+    }
+  }
 }
 
 void main() {
   Grid grid = Grid(size: 4);
-  grid.playGame(SwipeType.up);
+  grid.playGameSimulation(SwipeType.up);
   // grid.initGrid();
   // grid.initGridState();
   // print(grid.grid);

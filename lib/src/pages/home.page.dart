@@ -1,24 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:game2048/src/enums/SwipeType.enum.dart';
+import 'package:game2048/src/models/grid.model.dart';
 import 'package:game2048/src/widgets/grid.widget.dart';
 import 'package:game2048/src/widgets/swipe-detector.widget.dart';
 import '../widgets/score.widget.dart';
 
-class HomePage extends StatelessWidget {
-  HomePage({super.key}) {
-    for (int i = 0; i < 4; i++) {
-      // grid.add([0, 0, 0, 0]);
-    }
+class HomePage extends StatefulWidget {
+  const HomePage({
+    super.key,
+    this.color = const Color(0xFFFFE306),
+    this.child,
+  });
 
-    grid.add([0, 0, 0, 0]);
-    grid.add([1, 0, 0, 0]);
-    grid.add([0, 4, 0, 0]);
-    grid.add([0, 0, 0, 5]);
-  }
+  final Color color;
+  final Widget? child;
+
+  @override
+  State<HomePage> createState() => _HomePage();
+}
+
+class _HomePage extends State<HomePage> {
+  // HomePage({super.key}) {
+  //   // for (int i = 0; i < 4; i++) {
+  //   //   // grid.add([0, 0, 0, 0]);
+  //   // }
+
+  //   // grid.add([0, 0, 0, 0]);
+  //   // grid.add([1, 0, 0, 0]);
+  //   // grid.add([0, 4, 0, 0]);
+  //   // grid.add([0, 0, 0, 5]);
+  // }
 
   final int bestScore = 2048;
   final int currentScore = 0;
+  final Grid gameGrid = Grid(size: 4);
 
-  final List<List<int>> grid = [];
+  List<List<int>> currentGrid = [];
+
+  @override
+  void initState() {
+    super.initState();
+    currentGrid = gameGrid.grid;
+  }
+
+  void handleGameWhileSwipingAndUpdateGrid(SwipeType swipe) {
+    gameGrid.play(swipe);
+    setState(() {
+      currentGrid = gameGrid.grid;
+    });
+  }
+
+  //final List<List<int>> grid = [];
 
   @override
   Widget build(BuildContext context) {
@@ -36,16 +68,16 @@ class HomePage extends StatelessWidget {
         ),
         body: SwipeDetector(
           onSwipeLeft: () {
-            print('swipe left');
+            handleGameWhileSwipingAndUpdateGrid(SwipeType.left);
           },
           onSwipeRight: () {
-            print('swipe right');
+            handleGameWhileSwipingAndUpdateGrid(SwipeType.right);
           },
           onSwipeUp: () {
-            print('swipe up');
+            handleGameWhileSwipingAndUpdateGrid(SwipeType.up);
           },
           onSwipeDown: () {
-            print('swipe down');
+            handleGameWhileSwipingAndUpdateGrid(SwipeType.down);
           },
           child: Stack(
             children: [
@@ -68,7 +100,7 @@ class HomePage extends StatelessWidget {
               ),
               Center(
                 child: GridGameWidget(
-                  grid: grid,
+                  grid: currentGrid,
                 ),
               ),
               Align(
