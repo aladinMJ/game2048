@@ -7,7 +7,10 @@ class Grid {
   int size;
 
   Grid({required this.size});
+
   List<List<int>> grid = [];
+
+  int score = 0;
 
   ///
   /// Grid methods
@@ -17,6 +20,7 @@ class Grid {
   }
 
   void initGridState() {
+    initGrid();
     Map<String, int> firstRandomCell = {
       'row': Random().nextInt(size),
       'col': Random().nextInt(size),
@@ -164,7 +168,7 @@ class Grid {
     return grid[row1][col1] + grid[row2][col2];
   }
 
-  void generateRandomlyNewValue() {
+  void generateRandomlyNewCell() {
     int row, col;
     do {
       row = Random().nextInt(size);
@@ -172,6 +176,26 @@ class Grid {
     } while (grid[row][col] != 0);
 
     grid[row][col] = chooseRandomlyTwoOrFour();
+  }
+
+  void increaseScore(int value) {
+    score += value;
+  }
+
+  SwipeType chooseRandomlySwipeType() {
+    int value = Random().nextInt(5);
+    switch (value) {
+      case 1:
+        return SwipeType.left;
+      case 2:
+        return SwipeType.right;
+      case 3:
+        return SwipeType.up;
+      case 4:
+        return SwipeType.down;
+    }
+
+    return SwipeType.left;
   }
 
   //
@@ -209,21 +233,101 @@ class Grid {
         break;
     }
   }
+
+  bool gameBlocked() {
+    for (int i = 0; i < size; i++) {
+      for (int j = 0; j < size; j++) {
+        if (grid[i][j] == 0) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  void forEachCellToCheck(int row, int col, SwipeType swipeType) {
+    Direction direction = getDirection(swipeType);
+    switch (direction) {
+      case Direction.vertical:
+        for (int i = row; i < size; i++) {
+          if (grid[row][col] != 0 &&
+              (areNeighborsVertically(row, col, i, col) ||
+                  areSeparatedByEmptyCellsVertically(row, col, i, col)) &&
+              haveSameValues(row, col, i, col)) {
+            int sum = handleSum(row, col, i, col);
+            grid[row][col] = 0;
+            grid[i][col] = sum;
+            increaseScore(sum);
+            generateRandomlyNewCell();
+            print("after gen cell");
+          }
+        }
+        moveGrid(swipeType);
+
+        print(grid);
+        break;
+      case Direction.horizontal:
+        for (int i = col; i < size; i++) {
+          if (grid[row][col] != 0 &&
+              (areNeighborsHorizontally(row, col, row, i) ||
+                  areSeparatedByEmptyCellsHorizontally(row, col, row, i)) &&
+              haveSameValues(row, col, row, i)) {
+            int sum = handleSum(row, col, row, i);
+            grid[row][col] = 0;
+            grid[row][i] = sum;
+            increaseScore(sum);
+            generateRandomlyNewCell();
+            print("after gen cell");
+          }
+        }
+        moveGrid(swipeType);
+
+        print(grid);
+        break;
+    }
+  }
+
+  void playGame(SwipeType swipeType) {
+    initGridState();
+    print("init grid");
+    print(grid);
+    int nbTimesToPlay = 5;
+    while (nbTimesToPlay > 0) {
+      SwipeType swipe = chooseRandomlySwipeType();
+      print('swipe: $swipe'); // choose random swipe
+      for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+          if (grid[i][j] != 0) {
+            forEachCellToCheck(i, j, swipe);
+          }
+        }
+      }
+      // if (gameBlocked()) {
+      //   print('Game over! Score: $score');
+      //   break;
+      // }
+
+      print(grid);
+
+      nbTimesToPlay--;
+    }
+  }
 }
 
 void main() {
-  Grid grid = Grid(size: 5);
-  grid.initGrid();
-  grid.initGridState();
-  print(grid.grid);
-  grid.moveGrid(SwipeType.up);
-  print(grid.grid);
-  grid.moveGrid(SwipeType.down);
-  print(grid.grid);
-  grid.moveGrid(SwipeType.left);
-  print(grid.grid);
-  grid.moveGrid(SwipeType.right);
-  print(grid.grid);
-  grid.generateRandomlyNewValue();
-  print(grid.grid);
+  Grid grid = Grid(size: 4);
+  grid.playGame(SwipeType.up);
+  // grid.initGrid();
+  // grid.initGridState();
+  // print(grid.grid);
+  // grid.moveGrid(SwipeType.up);
+  // print(grid.grid);
+  // grid.moveGrid(SwipeType.down);
+  // print(grid.grid);
+  // grid.moveGrid(SwipeType.left);
+  // print(grid.grid);
+  // grid.moveGrid(SwipeType.right);
+  // print(grid.grid);
+  // grid.generateRandomlyNewCell();
+  // print(grid.grid);
 }
