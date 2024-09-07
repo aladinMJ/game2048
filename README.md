@@ -17,4 +17,8 @@
 
 # Cloner le projet
 
+- Pré-requis: Vous devez avoir le `SDK flutter`installés sur votre ordinateur
+
 - Cloner le projet avec `git clone `
+
+- Installer les dépendances avec `flutter packages get`
