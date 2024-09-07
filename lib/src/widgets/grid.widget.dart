@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:game2048/src/utils/cell-color.util.dart';
 
 class GridGameWidget extends StatelessWidget {
   List<List<int>> grid;
@@ -39,15 +40,18 @@ class GridGameWidget extends StatelessWidget {
                   height: 100.0,
                   child: Container(
                     padding: const EdgeInsets.all(8.0),
-                    color: Colors.black,
+                    //color: Colors.black,
+                    color: getCellColor(value),
                     child: Center(
-                      child: Text(
-                        '$value',
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 28.0,
-                            fontWeight: FontWeight.normal),
-                      ),
+                      child: value == 0
+                          ? const Text('')
+                          : Text(
+                              '$value',
+                              style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 52.0,
+                                  fontWeight: FontWeight.bold),
+                            ),
                     ),
                   ))
             ],
