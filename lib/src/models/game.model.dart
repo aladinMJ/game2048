@@ -1,12 +1,12 @@
 import 'dart:math';
-
+import 'package:flutter/foundation.dart';
 import 'package:game2048/src/enums/Direction.enum.dart';
 import 'package:game2048/src/enums/SwipeType.enum.dart';
 
-class Grid {
+class GameModel extends ChangeNotifier {
   int size;
 
-  Grid({required this.size}) {
+  GameModel({required this.size}) {
     initGridState();
   }
 
@@ -42,6 +42,13 @@ class Grid {
 
     grid[secondRandomCell['row'] as int][secondRandomCell['col'] as int] =
         chooseRandomlyTwoOrFour();
+
+    initScore();
+    notifyListeners();
+  }
+
+  void initScore() {
+    score = 0;
   }
 
   ///
@@ -167,6 +174,7 @@ class Grid {
   }
 
   int handleSum(int row1, int col1, int row2, int col2) {
+    notifyListeners();
     return grid[row1][col1] + grid[row2][col2];
   }
 
@@ -263,8 +271,7 @@ class Grid {
           }
         }
         moveGrid(swipeType);
-        generateRandomlyNewCell();
-        print("after gen cell");
+        // generateRandomlyNewCell();
         print(grid);
         break;
       case Direction.horizontal:
@@ -280,7 +287,7 @@ class Grid {
           }
         }
         moveGrid(swipeType);
-        generateRandomlyNewCell();
+        // generateRandomlyNewCell();
         print("after gen cell");
 
         print(grid);
@@ -326,7 +333,7 @@ class Grid {
 }
 
 void main() {
-  Grid grid = Grid(size: 4);
+  GameModel grid = GameModel(size: 4);
   grid.playGameSimulation(SwipeType.up);
   // grid.initGrid();
   // grid.initGridState();

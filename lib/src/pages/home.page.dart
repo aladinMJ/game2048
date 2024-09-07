@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:game2048/src/enums/SwipeType.enum.dart';
-import 'package:game2048/src/models/grid.model.dart';
+import 'package:game2048/src/models/game.model.dart';
+import 'package:game2048/src/widgets/current-score.widget.dart';
 import 'package:game2048/src/widgets/grid.widget.dart';
 import 'package:game2048/src/widgets/swipe-detector.widget.dart';
+import 'package:provider/provider.dart';
 import '../widgets/score.widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -32,21 +34,14 @@ class _HomePage extends State<HomePage> {
   // }
 
   final int bestScore = 2048;
-  final int currentScore = 0;
-  final Grid gameGrid = Grid(size: 4);
 
+  int currentScore = 0;
   List<List<int>> currentGrid = [];
 
-  @override
-  void initState() {
-    super.initState();
-    currentGrid = gameGrid.grid;
-  }
-
-  void handleGameWhileSwipingAndUpdateGrid(SwipeType swipe) {
-    gameGrid.play(swipe);
+  void handleGameWhileSwipingAndUpdateGrid(GameModel game, SwipeType swipe) {
+    game.play(swipe);
     setState(() {
-      currentGrid = gameGrid.grid;
+      currentGrid = game.grid;
     });
   }
 
@@ -58,37 +53,34 @@ class _HomePage extends State<HomePage> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-        appBar: AppBar(
-          title:
-              const Text('AA - 2 0 4 8 - PT', style: TextStyle(fontSize: 25)),
-          backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-          centerTitle: true,
-          titleTextStyle: const TextStyle(
-              color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
-        ),
-        body: SwipeDetector(
+      appBar: AppBar(
+        title: const Text('AA - 2 0 4 8 - PT', style: TextStyle(fontSize: 25)),
+        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+        centerTitle: true,
+        titleTextStyle: const TextStyle(
+            color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
+      ),
+      body: Consumer<GameModel>(builder: (context, gameGrid, child) {
+        return SwipeDetector(
           onSwipeLeft: () {
-            handleGameWhileSwipingAndUpdateGrid(SwipeType.left);
+            handleGameWhileSwipingAndUpdateGrid(gameGrid, SwipeType.left);
           },
           onSwipeRight: () {
-            handleGameWhileSwipingAndUpdateGrid(SwipeType.right);
+            handleGameWhileSwipingAndUpdateGrid(gameGrid, SwipeType.right);
           },
           onSwipeUp: () {
-            handleGameWhileSwipingAndUpdateGrid(SwipeType.up);
+            handleGameWhileSwipingAndUpdateGrid(gameGrid, SwipeType.up);
           },
           onSwipeDown: () {
-            handleGameWhileSwipingAndUpdateGrid(SwipeType.down);
+            handleGameWhileSwipingAndUpdateGrid(gameGrid, SwipeType.down);
           },
           child: Stack(
             children: [
-              Align(
+              const Align(
                 alignment: Alignment.topLeft,
                 child: Padding(
-                  padding: const EdgeInsets.all(50.0),
-                  child: ScoreWidget(
-                    score: currentScore,
-                    label: "Current Score",
-                  ),
+                  padding: EdgeInsets.all(50.0),
+                  child: CurrentScoreWidget(),
                 ),
               ),
               Align(
@@ -99,16 +91,20 @@ class _HomePage extends State<HomePage> {
                 ),
               ),
               Center(
-                child: GridGameWidget(
-                  grid: currentGrid,
-                ),
+                child: GridGameWidget(grid: gameGrid.grid),
               ),
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Padding(
                   padding: const EdgeInsets.all(80.0),
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      gameGrid.initGridState();
+                      setState(() {
+                        currentGrid = gameGrid.grid;
+                        currentScore = gameGrid.score;
+                      });
+                    },
                     style: ButtonStyle(
                         backgroundColor: WidgetStateProperty.all<Color>(
                           const Color.fromARGB(255, 0, 0, 0),
@@ -127,6 +123,8 @@ class _HomePage extends State<HomePage> {
               ),
             ],
           ),
-        ));
+        );
+      }),
+    );
   }
 }
