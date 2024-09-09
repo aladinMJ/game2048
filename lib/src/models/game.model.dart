@@ -14,6 +14,10 @@ class GameModel extends ChangeNotifier {
 
   int score = 0;
 
+  bool isGameWon = false;
+
+  bool isGridMoved = false;
+
   ///
   /// Grid methods
   ///
@@ -240,7 +244,6 @@ class GameModel extends ChangeNotifier {
   ///
   /// Game methods
   ///
-  ///
   void moveGrid(SwipeType swipeType) {
     switch (swipeType) {
       case SwipeType.left:
@@ -277,7 +280,37 @@ class GameModel extends ChangeNotifier {
     return false;
   }
 
-  bool gameBlocked() {
+  bool checkGameOver() {
+    for (int i = 0; i < size; i++) {
+      for (int j = 0; j < size; j++) {
+        if (grid[i][j] == 0) {
+          return false;
+        }
+      }
+    }
+
+    for (int i = 0; i < size - 1; i++) {
+      for (int j = 0; j < size - 1; j++) {
+        if (grid[i][j] == grid[i + 1][j] || grid[i][j] == grid[i][j + 1]) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  void updateIsGameWon() {
+    if (checkWin()) {
+      isGameWon = true;
+      print('Game won! Score: $score');
+    } else if (checkGameOver()) {
+      isGameWon = false;
+      print('Game over! Score: $score');
+    }
+  }
+
+  bool allCellsAreFilled() {
     for (int i = 0; i < size; i++) {
       for (int j = 0; j < size; j++) {
         if (grid[i][j] == 0) {
@@ -303,9 +336,6 @@ class GameModel extends ChangeNotifier {
             increaseScore(sum);
           }
         }
-        moveGrid(swipeType);
-        generateRandomlyNewCell();
-        print(grid);
         break;
       case Direction.horizontal:
         for (int i = col; i < size; i++) {
@@ -319,16 +349,27 @@ class GameModel extends ChangeNotifier {
             increaseScore(sum);
           }
         }
-        moveGrid(swipeType);
-        generateRandomlyNewCell();
-        print("after gen cell");
-
-        print(grid);
         break;
     }
   }
 
-  void playGameSimulation(SwipeType swipeType) {
+  void play(SwipeType swipe) {
+    for (int i = 0; i < size; i++) {
+      for (int j = 0; j < size; j++) {
+        if (grid[i][j] != 0) {
+          forEachCellToCheck(i, j, swipe);
+        }
+      }
+    }
+    moveGrid(swipe);
+    updateIsGameWon();
+    generateRandomlyNewCell();
+  }
+
+  //
+  // DRAFT TESTS
+  //
+  void playGameSimulationForTestWithoutWidget(SwipeType swipeType) {
     // initGridState();
     print("init grid");
     print(grid);
@@ -353,21 +394,11 @@ class GameModel extends ChangeNotifier {
       nbTimesToPlay--;
     }
   }
-
-  void play(SwipeType swipe) {
-    for (int i = 0; i < size; i++) {
-      for (int j = 0; j < size; j++) {
-        if (grid[i][j] != 0) {
-          forEachCellToCheck(i, j, swipe);
-        }
-      }
-    }
-  }
 }
 
 void main() {
-  GameModel grid = GameModel(size: 4);
-  grid.playGameSimulation(SwipeType.up);
+  // GameModel grid = GameModel(size: 4);
+  // grid.playGameSimulationForTestWithoutWidget(SwipeType.up);
   // grid.initGrid();
   // grid.initGridState();
   // print(grid.grid);
