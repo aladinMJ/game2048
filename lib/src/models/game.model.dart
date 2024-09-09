@@ -17,7 +17,7 @@ class GameModel extends ChangeNotifier {
 
   int isGameWon = -1;
 
-  //bool isGridMoved = false;
+  bool isGridMoved = false;
 
   ///
   /// Grid methods
@@ -81,6 +81,7 @@ class GameModel extends ChangeNotifier {
     int temp = grid[row1][col1];
     grid[row1][col1] = grid[row2][col2];
     grid[row2][col2] = temp;
+    isGridMoved = true;
   }
 
   void moveColumnUp(int col) {
@@ -271,13 +272,34 @@ class GameModel extends ChangeNotifier {
 
     for (int i = 0; i < size - 1; i++) {
       for (int j = 0; j < size - 1; j++) {
-        if (grid[i][j] == grid[i + 1][j] || grid[i][j] == grid[i][j + 1]) {
+        if (forEachCellToCheckCombinationPossible(i, j)) {
           return false;
         }
       }
     }
 
     return true;
+  }
+
+  bool forEachCellToCheckCombinationPossible(int row, int col) {
+    for (int i = 0; i < size; i++) {
+      for (int i = row; i < size; i++) {
+        if (grid[row][col] != 0 &&
+            areNeighborsVertically(row, col, i, col) &&
+            haveSameValues(row, col, i, col)) {
+          return true;
+        }
+      }
+      for (int i = col; i < size; i++) {
+        if (grid[row][col] != 0 &&
+            areNeighborsHorizontally(row, col, row, i) &&
+            haveSameValues(row, col, row, i)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   void updateIsGameWon() {
@@ -343,7 +365,10 @@ class GameModel extends ChangeNotifier {
     }
     moveGrid(swipe);
     updateIsGameWon();
-    generateRandomlyNewCell();
+    if (isGridMoved) {
+      generateRandomlyNewCell();
+    }
+    isGridMoved = false;
   }
 
   //
