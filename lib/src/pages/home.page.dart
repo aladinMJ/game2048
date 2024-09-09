@@ -22,20 +22,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePage extends State<HomePage> {
-  // HomePage({super.key}) {
-  //   // for (int i = 0; i < 4; i++) {
-  //   //   // grid.add([0, 0, 0, 0]);
-  //   // }
+  // HomePage({super.key }) {
+  //   for (int i = 0; i < 4; i++) {
+  //     // grid.add([0, 0, 0, 0]);
+  //   }
 
-  //   // grid.add([0, 0, 0, 0]);
-  //   // grid.add([1, 0, 0, 0]);
-  //   // grid.add([0, 4, 0, 0]);
-  //   // grid.add([0, 0, 0, 5]);
+  //   grid.add([0, 0, 0, 0]);
+  //   grid.add([1, 0, 0, 0]);
+  //   grid.add([0, 4, 0, 0]);
+  //   grid.add([0, 0, 0, 5]);
   // }
 
   final int bestScore = 2048;
 
-  int currentScore = 0;
+  // int currentScore = 0;
   List<List<int>> currentGrid = [];
 
   void handleGameWhileSwipingAndUpdateGrid(GameModel game, SwipeType swipe) {
@@ -45,7 +45,20 @@ class _HomePage extends State<HomePage> {
     });
   }
 
-  //final List<List<int>> grid = [];
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   for (int i = 0; i < 4; i++) {
+  //     // grid.add([0, 0, 0, 0]);
+  //   }
+
+  //   grid.add([0, 1024, 0, 0]);
+  //   grid.add([2, 0, 0, 512]);
+  //   grid.add([0, 256, 32, 0]);
+  //   grid.add([0, 2048, 0, 4]);
+  // }
+
+  final List<List<int>> grid = [];
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +115,7 @@ class _HomePage extends State<HomePage> {
                       gameGrid.initGridState();
                       setState(() {
                         currentGrid = gameGrid.grid;
-                        currentScore = gameGrid.score;
+                        // currentScore = gameGrid.score;
                       });
                     },
                     style: ButtonStyle(

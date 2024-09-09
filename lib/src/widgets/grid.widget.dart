@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:game2048/src/utils/cell-color.util.dart';
 
 class GridGameWidget extends StatelessWidget {
   List<List<int>> grid;
@@ -19,6 +18,54 @@ class GridGameWidget extends StatelessWidget {
       ratio = 0.020;
     } else {
       ratio = 0.001;
+    }
+
+    Color getCellColor(int number) {
+      switch (number) {
+        case 2:
+          return const Color(0xFFEEE4DA); // Beige clair
+        case 4:
+          return const Color(0xFFEDE0C8); // Beige foncé
+        case 8:
+          return const Color(0xFFF2B179); // Orange clair
+        case 16:
+          return const Color(0xFFF59563); // Orange moyen
+        case 32:
+          return const Color(0xFFF67C5F); // Orange vif
+        case 64:
+          return const Color(0xFFF65E3B); // Rouge orangé
+        case 128:
+          return const Color(0xFFEDCF72); // Jaune doré
+        case 256:
+          return const Color(0xFFEDCC61); // Jaune doré plus intense
+        case 512:
+          return const Color(0xFFEDC850); // Jaune doré foncé
+        case 1024:
+          return const Color(0xFFEDC53F); // Jaune intense
+        case 2048:
+          return const Color(0xFFEDC22E); // Jaune vif
+        default:
+          return const Color(
+              0xFFCDC1B4); // Gris clair (pour les cases vides ou valeurs au-delà de 2048)
+      }
+    }
+
+    double getCellFontSize(int number) {
+      int length =
+          number.toString().length; // Nombre de chiffres dans le nombre
+
+      switch (length) {
+        case 1: // Pour un chiffre
+          return 52.0;
+        case 2: // Pour deux chiffres
+          return 48.0;
+        case 3: // Pour trois chiffres
+          return 44.0;
+        case 4: // Pour quatre chiffres
+          return 36.0;
+        default: // Pour cinq chiffres ou plus
+          return 20.0;
+      }
     }
 
     return GridView.count(
@@ -47,9 +94,9 @@ class GridGameWidget extends StatelessWidget {
                           ? const Text('')
                           : Text(
                               '$value',
-                              style: const TextStyle(
+                              style: TextStyle(
                                   color: Colors.black,
-                                  fontSize: 52.0,
+                                  fontSize: getCellFontSize(value),
                                   fontWeight: FontWeight.bold),
                             ),
                     ),
