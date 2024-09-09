@@ -5,6 +5,8 @@ import 'package:game2048/src/widgets/current-score.widget.dart';
 import 'package:game2048/src/widgets/grid.widget.dart';
 import 'package:game2048/src/widgets/swipe-detector.widget.dart';
 import 'package:provider/provider.dart';
+import '../widgets/game_lost.dart';
+import '../widgets/game_win.dart';
 import '../widgets/score.widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -67,7 +69,7 @@ class _HomePage extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AA - 2 0 4 8 - PT', style: TextStyle(fontSize: 25)),
+        title: const Text('2 0 4 8', style: TextStyle(fontSize: 25)),
         backgroundColor: const Color.fromARGB(255, 0, 0, 0),
         centerTitle: true,
         titleTextStyle: const TextStyle(
