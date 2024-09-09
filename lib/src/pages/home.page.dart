@@ -119,10 +119,10 @@ class _HomePage extends State<HomePage> {
                       });
                     },
                     style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all<Color>(
+                        backgroundColor: MaterialStateProperty.all<Color>(
                           const Color.fromARGB(255, 0, 0, 0),
                         ),
-                        minimumSize: WidgetStateProperty.all<Size>(
+                        minimumSize: MaterialStateProperty.all<Size>(
                           Size(screenWidth * 0.8, screenHeight * 0.08),
                         )),
                     child: const Text('RESTART',
