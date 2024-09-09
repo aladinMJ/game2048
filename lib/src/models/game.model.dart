@@ -1,7 +1,8 @@
 import 'dart:math';
 import 'package:flutter/foundation.dart';
-import 'package:game2048/src/enums/Direction.enum.dart';
-import 'package:game2048/src/enums/SwipeType.enum.dart';
+import 'package:game2048/src/enums/direction.enum.dart';
+import 'package:game2048/src/enums/swipe-type.enum.dart';
+import 'package:localstorage/localstorage.dart';
 
 class GameModel extends ChangeNotifier {
   int size;
@@ -14,9 +15,9 @@ class GameModel extends ChangeNotifier {
 
   int score = 0;
 
-  bool isGameWon = false;
+  int isGameWon = -1;
 
-  bool isGridMoved = false;
+  //bool isGridMoved = false;
 
   ///
   /// Grid methods
@@ -48,11 +49,16 @@ class GameModel extends ChangeNotifier {
         chooseRandomlyTwoOrFour();
 
     initScore();
+    initIsGameWon();
     notifyListeners();
   }
 
   void initScore() {
     score = 0;
+  }
+
+  void initIsGameWon() {
+    isGameWon = -1;
   }
 
   ///
@@ -182,16 +188,6 @@ class GameModel extends ChangeNotifier {
     return grid[row1][col1] + grid[row2][col2];
   }
 
-  // void generateRandomlyNewCell() {
-  //   int row, col;
-  //   do {
-  //     row = Random().nextInt(size);
-  //     col = Random().nextInt(size);
-  //   } while (grid[row][col] != 0);
-
-  //   grid[row][col] = chooseRandomlyTwoOrFour();
-  // }
-
   void generateRandomlyNewCell() {
     List<Map<String, int>> emptyCells = getEmptyCells();
     if (emptyCells.isNotEmpty) {
@@ -216,22 +212,6 @@ class GameModel extends ChangeNotifier {
 
   void increaseScore(int value) {
     score += value;
-  }
-
-  SwipeType chooseRandomlySwipeType() {
-    int value = Random().nextInt(5);
-    switch (value) {
-      case 1:
-        return SwipeType.left;
-      case 2:
-        return SwipeType.right;
-      case 3:
-        return SwipeType.up;
-      case 4:
-        return SwipeType.down;
-    }
-
-    return SwipeType.left;
   }
 
   //
@@ -302,10 +282,10 @@ class GameModel extends ChangeNotifier {
 
   void updateIsGameWon() {
     if (checkWin()) {
-      isGameWon = true;
+      isGameWon = 0;
       print('Game won! Score: $score');
     } else if (checkGameOver()) {
-      isGameWon = false;
+      isGameWon = 1;
       print('Game over! Score: $score');
     }
   }
@@ -367,33 +347,50 @@ class GameModel extends ChangeNotifier {
   }
 
   //
-  // DRAFT TESTS
+  // DRAFT TESTS IN THIS FILE: without any widget
   //
-  void playGameSimulationForTestWithoutWidget(SwipeType swipeType) {
-    // initGridState();
-    print("init grid");
-    print(grid);
-    int nbTimesToPlay = 5;
-    while (nbTimesToPlay > 0) {
-      SwipeType swipe = chooseRandomlySwipeType();
-      print('swipe: $swipe'); // choose random swipe
-      for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-          if (grid[i][j] != 0) {
-            forEachCellToCheck(i, j, swipe);
-          }
-        }
-      }
-      // if (gameBlocked()) {
-      //   print('Game over! Score: $score');
-      //   break;
-      // }
 
-      print(grid);
+  // SwipeType chooseRandomlySwipeType() {
+  //   int value = Random().nextInt(5);
+  //   switch (value) {
+  //     case 1:
+  //       return SwipeType.left;
+  //     case 2:
+  //       return SwipeType.right;
+  //     case 3:
+  //       return SwipeType.up;
+  //     case 4:
+  //       return SwipeType.down;
+  //   }
 
-      nbTimesToPlay--;
-    }
-  }
+  //   return SwipeType.left;
+  // }
+
+  // void playGameSimulationForTestWithoutWidget(SwipeType swipeType) {
+  //   // initGridState();
+  //   print("init grid");
+  //   print(grid);
+  //   int nbTimesToPlay = 5;
+  //   while (nbTimesToPlay > 0) {
+  //     SwipeType swipe = chooseRandomlySwipeType();
+  //     print('swipe: $swipe'); // choose random swipe
+  //     for (int i = 0; i < size; i++) {
+  //       for (int j = 0; j < size; j++) {
+  //         if (grid[i][j] != 0) {
+  //           forEachCellToCheck(i, j, swipe);
+  //         }
+  //       }
+  //     }
+  //     // if (gameBlocked()) {
+  //     //   print('Game over! Score: $score');
+  //     //   break;
+  //     // }
+
+  //     print(grid);
+
+  //     nbTimesToPlay--;
+  //   }
+  // }
 }
 
 void main() {
