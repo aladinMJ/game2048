@@ -178,14 +178,36 @@ class GameModel extends ChangeNotifier {
     return grid[row1][col1] + grid[row2][col2];
   }
 
-  void generateRandomlyNewCell() {
-    int row, col;
-    do {
-      row = Random().nextInt(size);
-      col = Random().nextInt(size);
-    } while (grid[row][col] != 0);
+  // void generateRandomlyNewCell() {
+  //   int row, col;
+  //   do {
+  //     row = Random().nextInt(size);
+  //     col = Random().nextInt(size);
+  //   } while (grid[row][col] != 0);
 
-    grid[row][col] = chooseRandomlyTwoOrFour();
+  //   grid[row][col] = chooseRandomlyTwoOrFour();
+  // }
+
+  void generateRandomlyNewCell() {
+    List<Map<String, int>> emptyCells = getEmptyCells();
+    if (emptyCells.isNotEmpty) {
+      int index = Random().nextInt(emptyCells.length);
+      Map<String, int> cell = emptyCells[index];
+      grid[cell['row'] as int][cell['col'] as int] = chooseRandomlyTwoOrFour();
+    }
+  }
+
+  List<Map<String, int>> getEmptyCells() {
+    List<Map<String, int>> emptyCells = [];
+    for (int i = 0; i < size; i++) {
+      for (int j = 0; j < size; j++) {
+        if (grid[i][j] == 0) {
+          emptyCells.add({'row': i, 'col': j});
+        }
+      }
+    }
+
+    return emptyCells;
   }
 
   void increaseScore(int value) {
@@ -244,6 +266,17 @@ class GameModel extends ChangeNotifier {
     }
   }
 
+  bool checkWin() {
+    for (int i = 0; i < size; i++) {
+      for (int j = 0; j < size; j++) {
+        if (grid[i][j] == 2048) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   bool gameBlocked() {
     for (int i = 0; i < size; i++) {
       for (int j = 0; j < size; j++) {
@@ -271,7 +304,7 @@ class GameModel extends ChangeNotifier {
           }
         }
         moveGrid(swipeType);
-        // generateRandomlyNewCell();
+        generateRandomlyNewCell();
         print(grid);
         break;
       case Direction.horizontal:
@@ -287,7 +320,7 @@ class GameModel extends ChangeNotifier {
           }
         }
         moveGrid(swipeType);
-        // generateRandomlyNewCell();
+        generateRandomlyNewCell();
         print("after gen cell");
 
         print(grid);
