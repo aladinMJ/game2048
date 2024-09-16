@@ -2,7 +2,6 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:game2048/src/enums/direction.enum.dart';
 import 'package:game2048/src/enums/swipe-type.enum.dart';
-import 'package:localstorage/localstorage.dart';
 
 class GameModel extends ChangeNotifier {
   int size;

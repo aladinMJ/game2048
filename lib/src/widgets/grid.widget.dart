@@ -44,19 +44,20 @@ class GridGameWidget extends StatelessWidget {
     }
 
     double getCellFontSize(int number) {
-      int length = number.toString().length;
+      int length =
+          number.toString().length; // Nombre de chiffres dans le nombre
 
       switch (length) {
         case 1:
-          return cellSize * 0.5;
+          return 52.0;
         case 2:
-          return cellSize * 0.45;
+          return 48.0;
         case 3:
-          return cellSize * 0.4;
+          return 44.0;
         case 4:
-          return cellSize * 0.3;
+          return 36.0;
         default:
-          return cellSize * 0.2;
+          return 32.0;
       }
     }
 
