@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/foundation.dart';
-import 'package:game2048/src/enums/Direction.enum.dart';
-import 'package:game2048/src/enums/SwipeType.enum.dart';
+import 'package:game2048/src/enums/direction.enum.dart';
+import 'package:game2048/src/enums/swipe-type.enum.dart';
 
 class GameModel extends ChangeNotifier {
   int size;
@@ -13,6 +13,10 @@ class GameModel extends ChangeNotifier {
   List<List<int>> grid = [];
 
   int score = 0;
+
+  int isGameWon = -1;
+
+  bool isGridMoved = false;
 
   ///
   /// Grid methods
@@ -44,11 +48,16 @@ class GameModel extends ChangeNotifier {
         chooseRandomlyTwoOrFour();
 
     initScore();
+    initIsGameWon();
     notifyListeners();
   }
 
   void initScore() {
     score = 0;
+  }
+
+  void initIsGameWon() {
+    isGameWon = -1;
   }
 
   ///
@@ -71,6 +80,7 @@ class GameModel extends ChangeNotifier {
     int temp = grid[row1][col1];
     grid[row1][col1] = grid[row2][col2];
     grid[row2][col2] = temp;
+    isGridMoved = true;
   }
 
   void moveColumnUp(int col) {
@@ -179,33 +189,29 @@ class GameModel extends ChangeNotifier {
   }
 
   void generateRandomlyNewCell() {
-    int row, col;
-    do {
-      row = Random().nextInt(size);
-      col = Random().nextInt(size);
-    } while (grid[row][col] != 0);
+    List<Map<String, int>> emptyCells = getEmptyCells();
+    if (emptyCells.isNotEmpty) {
+      int index = Random().nextInt(emptyCells.length);
+      Map<String, int> cell = emptyCells[index];
+      grid[cell['row'] as int][cell['col'] as int] = chooseRandomlyTwoOrFour();
+    }
+  }
 
-    grid[row][col] = chooseRandomlyTwoOrFour();
+  List<Map<String, int>> getEmptyCells() {
+    List<Map<String, int>> emptyCells = [];
+    for (int i = 0; i < size; i++) {
+      for (int j = 0; j < size; j++) {
+        if (grid[i][j] == 0) {
+          emptyCells.add({'row': i, 'col': j});
+        }
+      }
+    }
+
+    return emptyCells;
   }
 
   void increaseScore(int value) {
     score += value;
-  }
-
-  SwipeType chooseRandomlySwipeType() {
-    int value = Random().nextInt(5);
-    switch (value) {
-      case 1:
-        return SwipeType.left;
-      case 2:
-        return SwipeType.right;
-      case 3:
-        return SwipeType.up;
-      case 4:
-        return SwipeType.down;
-    }
-
-    return SwipeType.left;
   }
 
   //
@@ -217,7 +223,6 @@ class GameModel extends ChangeNotifier {
 
   ///
   /// Game methods
-  ///
   ///
   void moveGrid(SwipeType swipeType) {
     switch (swipeType) {
@@ -244,7 +249,69 @@ class GameModel extends ChangeNotifier {
     }
   }
 
-  bool gameBlocked() {
+  bool checkWin() {
+    for (int i = 0; i < size; i++) {
+      for (int j = 0; j < size; j++) {
+        if (grid[i][j] == 2048) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  bool checkGameOver() {
+    for (int i = 0; i < size; i++) {
+      for (int j = 0; j < size; j++) {
+        if (grid[i][j] == 0) {
+          return false;
+        }
+      }
+    }
+
+    for (int i = 0; i < size - 1; i++) {
+      for (int j = 0; j < size - 1; j++) {
+        if (forEachCellToCheckCombinationPossible(i, j)) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  bool forEachCellToCheckCombinationPossible(int row, int col) {
+    for (int i = 0; i < size; i++) {
+      for (int i = row; i < size; i++) {
+        if (grid[row][col] != 0 &&
+            areNeighborsVertically(row, col, i, col) &&
+            haveSameValues(row, col, i, col)) {
+          return true;
+        }
+      }
+      for (int i = col; i < size; i++) {
+        if (grid[row][col] != 0 &&
+            areNeighborsHorizontally(row, col, row, i) &&
+            haveSameValues(row, col, row, i)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  void updateIsGameWon() {
+    if (checkWin()) {
+      isGameWon = 0;
+      print('Game won! Score: $score');
+    } else if (checkGameOver()) {
+      isGameWon = 1;
+      print('Game over! Score: $score');
+    }
+  }
+
+  bool allCellsAreFilled() {
     for (int i = 0; i < size; i++) {
       for (int j = 0; j < size; j++) {
         if (grid[i][j] == 0) {
@@ -270,9 +337,6 @@ class GameModel extends ChangeNotifier {
             increaseScore(sum);
           }
         }
-        moveGrid(swipeType);
-        // generateRandomlyNewCell();
-        print(grid);
         break;
       case Direction.horizontal:
         for (int i = col; i < size; i++) {
@@ -286,38 +350,7 @@ class GameModel extends ChangeNotifier {
             increaseScore(sum);
           }
         }
-        moveGrid(swipeType);
-        // generateRandomlyNewCell();
-        print("after gen cell");
-
-        print(grid);
         break;
-    }
-  }
-
-  void playGameSimulation(SwipeType swipeType) {
-    // initGridState();
-    print("init grid");
-    print(grid);
-    int nbTimesToPlay = 5;
-    while (nbTimesToPlay > 0) {
-      SwipeType swipe = chooseRandomlySwipeType();
-      print('swipe: $swipe'); // choose random swipe
-      for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-          if (grid[i][j] != 0) {
-            forEachCellToCheck(i, j, swipe);
-          }
-        }
-      }
-      // if (gameBlocked()) {
-      //   print('Game over! Score: $score');
-      //   break;
-      // }
-
-      print(grid);
-
-      nbTimesToPlay--;
     }
   }
 
@@ -329,12 +362,64 @@ class GameModel extends ChangeNotifier {
         }
       }
     }
+    moveGrid(swipe);
+    updateIsGameWon();
+    if (isGridMoved) {
+      generateRandomlyNewCell();
+    }
+    isGridMoved = false;
   }
+
+  //
+  // DRAFT TESTS IN THIS FILE: without any widget
+  //
+
+  // SwipeType chooseRandomlySwipeType() {
+  //   int value = Random().nextInt(5);
+  //   switch (value) {
+  //     case 1:
+  //       return SwipeType.left;
+  //     case 2:
+  //       return SwipeType.right;
+  //     case 3:
+  //       return SwipeType.up;
+  //     case 4:
+  //       return SwipeType.down;
+  //   }
+
+  //   return SwipeType.left;
+  // }
+
+  // void playGameSimulationForTestWithoutWidget(SwipeType swipeType) {
+  //   // initGridState();
+  //   print("init grid");
+  //   print(grid);
+  //   int nbTimesToPlay = 5;
+  //   while (nbTimesToPlay > 0) {
+  //     SwipeType swipe = chooseRandomlySwipeType();
+  //     print('swipe: $swipe'); // choose random swipe
+  //     for (int i = 0; i < size; i++) {
+  //       for (int j = 0; j < size; j++) {
+  //         if (grid[i][j] != 0) {
+  //           forEachCellToCheck(i, j, swipe);
+  //         }
+  //       }
+  //     }
+  //     // if (gameBlocked()) {
+  //     //   print('Game over! Score: $score');
+  //     //   break;
+  //     // }
+
+  //     print(grid);
+
+  //     nbTimesToPlay--;
+  //   }
+  // }
 }
 
 void main() {
-  GameModel grid = GameModel(size: 4);
-  grid.playGameSimulation(SwipeType.up);
+  // GameModel grid = GameModel(size: 4);
+  // grid.playGameSimulationForTestWithoutWidget(SwipeType.up);
   // grid.initGrid();
   // grid.initGridState();
   // print(grid.grid);
