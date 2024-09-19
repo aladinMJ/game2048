@@ -25,8 +25,8 @@
 
 Ce projet est une implémentation du célébre `jeu 2048`.
 
-- Pour en savoir plus sur els règles et comment fonctionne le jeu: [gam2048](<https://fr.wikipedia.org/wiki/2048_(jeu_vid%C3%A9o)>)
-- Pour prendre en main facilement le jeu et y jouer
+- Pour en savoir plus sur les règles et comment fonctionne le jeu: [jeu 2048 - wikipedia](<https://fr.wikipedia.org/wiki/2048_(jeu_vid%C3%A9o)>)
+- Pour prendre en main facilement le jeu et y jouer: [jeu 2048 - en ligne](https://jeu2048.fr/)
 
 ## ⚙️ Choix d'implémentation
 
@@ -46,7 +46,7 @@ Le code source du projet se trouve dans le dossier `lib` qui contient le dossier
 
 - `models` contient le fichier:
 
-  - `game.model.dart` avec `GameModel` qui permet de définir les structure données et toutes les algorithmes nécessaire pour vérifier les règles du jeu, jouer, mettre à jour le score vérifier si c'est gagné ou si c'est perdu
+  - `game.model.dart` avec `GameModel` qui permet de définir les structure données et toutes les algorithmes nécessaires pour vérifier les règles du jeu, jouer, mettre à jour le score vérifier si c'est gagné ou si c'est perdu
 
 - `pages` contient les fichiers consommant directement ou indirectement des données de `GameModel` à travers `provider` :
 
@@ -54,7 +54,7 @@ Le code source du projet se trouve dans le dossier `lib` qui contient le dossier
   - `game-won.page.dart` qui représente l'écran qui va s'afficher lorsque le jeu est gagné
   - `game-over.page.dart` qui représente l'écran qui va s'afficher lorsque le jeu est perdu
 
-- `widgets` contients des composants/widegets personnalisés qui sont paramétrables et utilisatbles partout dans le projets. Et c'est eux qui définissent les pages du jeu. Parmi les widgets, on a:
+- `widgets` contient des composants/widgets personnalisés qui sont paramétrables et utilisatbles/reutilisables partout dans le projet. Et c'est eux qui définissent les pages du jeu. Parmi les widgets, on a:
   - `swipe-detector.widget.dart` qui prend en paramètres 4 types de callback selon le sens du swipe (haut, bas, gauche, droite)
   - `grid.widget.dart` qui prend en paramètre une liste de liste d'entier et retourne en rendu une grille de 2 dimenensions 4x4
   - `score.widget.dart` avec `ScoreWidget`qui prend en paramètres le `score` et le `label` indiquant le type de score
@@ -63,11 +63,15 @@ Le code source du projet se trouve dans le dossier `lib` qui contient le dossier
 
 # Cloner le projet
 
-- Pré-requis: Vous devez avoir le `SDK flutter` installés sur votre ordinateur avec les versions suivante de préférences :
+- Pré-requis: Vous devez avoir un émulateur `android (avec Android Studio)` ou un émulateur `ios (avec Xcode)` et le `SDK flutter` installé sur votre ordinateur avec les versions suivantes de préférence :
 
   - `Flutter v3.24.1`
   - `Dart v3.5.1`
 
-- Cloner le projet avec `git clone `
+- Cloner le projet avec `git clone https://github.com/mayel15/game2048.git`
+
+- Aller dans le répertoire du projet
 
 - Installer les dépendances avec `flutter packages get`
+
+- Lancer l'application et jouer 🥳
